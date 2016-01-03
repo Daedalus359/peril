@@ -1,18 +1,25 @@
-package com.forerunnergames.peril.common.net.events.defaults;
+package com.forerunnergames.peril.common.net.events.abstracts;
 
 import com.forerunnergames.peril.common.net.events.interfaces.PlayerSelectCountryResponseEvent;
 import com.forerunnergames.tools.common.Arguments;
+import com.forerunnergames.tools.common.Strings;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
 
-public class DefaultPlayerSelectCountryResponseEvent implements PlayerSelectCountryResponseEvent
+public abstract class AbstractPlayerSelectCountryResponseEvent implements PlayerSelectCountryResponseEvent
 {
   private final String selectedCountryName;
 
-  public DefaultPlayerSelectCountryResponseEvent (final String selectedCountryName)
+  protected AbstractPlayerSelectCountryResponseEvent (final String selectedCountryName)
   {
     Arguments.checkIsNotNull (selectedCountryName, "selectedCountryName");
 
     this.selectedCountryName = selectedCountryName;
+  }
+
+  @RequiredForNetworkSerialization
+  protected AbstractPlayerSelectCountryResponseEvent ()
+  {
+    selectedCountryName = null;
   }
 
   @Override
@@ -24,12 +31,6 @@ public class DefaultPlayerSelectCountryResponseEvent implements PlayerSelectCoun
   @Override
   public String toString ()
   {
-    return String.format ("%1$s: Selected Country Name: %2$s", getClass ().getSimpleName (), selectedCountryName);
-  }
-
-  @RequiredForNetworkSerialization
-  private DefaultPlayerSelectCountryResponseEvent ()
-  {
-    selectedCountryName = null;
+    return Strings.format ("{}: Selected Country Name: {}", getClass ().getSimpleName (), selectedCountryName);
   }
 }

@@ -1,6 +1,6 @@
 package com.forerunnergames.peril.common.net.events.server.denied;
 
-import com.forerunnergames.peril.common.net.events.server.defaults.AbstractDeniedEvent;
+import com.forerunnergames.peril.common.net.events.server.abstracts.AbstractDeniedEvent;
 import com.forerunnergames.tools.common.Arguments;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
 

@@ -3,17 +3,15 @@ package com.forerunnergames.peril.common.net.events;
 import com.forerunnergames.peril.common.net.GameServerConfiguration;
 import com.forerunnergames.peril.common.net.events.client.request.PlayerJoinGameRequestEvent;
 import com.forerunnergames.peril.common.net.events.interfaces.ChatMessageEvent;
-import com.forerunnergames.peril.common.net.events.interfaces.KickEvent;
 import com.forerunnergames.peril.common.net.events.interfaces.MessageEvent;
+import com.forerunnergames.peril.common.net.events.interfaces.PlayerEvent;
 import com.forerunnergames.peril.common.net.events.interfaces.PlayerSelectCountryResponseEvent;
+import com.forerunnergames.peril.common.net.events.interfaces.PlayersEvent;
 import com.forerunnergames.peril.common.net.events.server.denied.JoinGameServerDeniedEvent;
 import com.forerunnergames.peril.common.net.events.server.denied.PlayerJoinGameDeniedEvent;
-import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerInputRequestEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.CountryArmiesChangedEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.PlayerCountryAssignmentCompleteEvent;
-import com.forerunnergames.peril.common.net.events.server.notification.PlayerLeaveGameEvent;
 import com.forerunnergames.peril.common.net.events.server.success.JoinGameServerSuccessEvent;
-import com.forerunnergames.peril.common.net.events.server.success.PlayerJoinGameSuccessEvent;
 import com.forerunnergames.peril.common.net.events.server.success.PlayerSelectCountryResponseSuccessEvent;
 import com.forerunnergames.peril.common.net.packets.person.PlayerPacket;
 import com.forerunnergames.peril.common.net.packets.territory.CountryPacket;
@@ -44,28 +42,28 @@ public final class EventFluency
     return event.getMessage ();
   }
 
-  public static PlayerPacket playerFrom (final PlayerJoinGameSuccessEvent event)
+  public static PlayerPacket playerFrom (final PlayerEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
 
     return event.getPlayer ();
   }
 
-  public static PlayerPacket playerFrom (final PlayerInputRequestEvent event)
+  public static ImmutableSet <PlayerPacket> playersFrom (final PlayersEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
 
-    return event.getPlayer ();
+    return event.getPlayers ();
+  }
+
+  public static String playerNameFrom (final PlayerEvent event)
+  {
+    Arguments.checkIsNotNull (event, "event");
+
+    return event.getPlayer ().getName ();
   }
 
   public static String playerNameFrom (final PlayerJoinGameRequestEvent event)
-  {
-    Arguments.checkIsNotNull (event, "event");
-
-    return event.getPlayerName ();
-  }
-
-  public static String playerNameFrom (final PlayerJoinGameSuccessEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
 
@@ -77,34 +75,6 @@ public final class EventFluency
     Arguments.checkIsNotNull (event, "event");
 
     return event.getPlayerName ();
-  }
-
-  public static PlayerPacket playerFrom (final PlayerLeaveGameEvent event)
-  {
-    Arguments.checkIsNotNull (event, "event");
-
-    return event.getPlayer ();
-  }
-
-  public static String playerNameFrom (final PlayerLeaveGameEvent event)
-  {
-    Arguments.checkIsNotNull (event, "event");
-
-    return event.getPlayerName ();
-  }
-
-  public static ImmutableSet <PlayerPacket> playersInGameFrom (final JoinGameServerSuccessEvent event)
-  {
-    Arguments.checkIsNotNull (event, "event");
-
-    return event.getPlayersInGame ();
-  }
-
-  public static String reasonForKickFrom (final KickEvent event)
-  {
-    Arguments.checkIsNotNull (event, "event");
-
-    return event.getReasonForKick ();
   }
 
   public static <T> T reasonFrom (final DeniedEvent <T> event)
@@ -125,8 +95,8 @@ public final class EventFluency
   public static String withAuthorNameFrom (final ChatMessageEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
-    Arguments.checkIsTrue (event.hasAuthor (),
-                           "Cannot get author name for non-existent author in event [" + event + "].");
+    Arguments.checkIsTrue (event.hasAuthor (), "Cannot get author name for non-existent author in event [" + event
+            + "].");
 
     return event.getAuthor ().getName ();
   }

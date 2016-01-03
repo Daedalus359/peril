@@ -1,4 +1,4 @@
-package com.forerunnergames.peril.common.net.events.server.defaults;
+package com.forerunnergames.peril.common.net.events.server.abstracts;
 
 import com.forerunnergames.tools.common.Strings;
 import com.forerunnergames.tools.common.annotations.AllowNegative;

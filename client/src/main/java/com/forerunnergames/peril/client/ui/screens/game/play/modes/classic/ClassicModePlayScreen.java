@@ -474,7 +474,7 @@ public final class ClassicModePlayScreen extends InputAdapter implements Screen
       {
         log.trace ("Event received [{}].", event);
 
-        playerBox.setPlayers (event.getPlayersLeftInGame ());
+        playerBox.setPlayers (event.getPlayers ());
       }
     });
   }

@@ -1,28 +1,40 @@
 package com.forerunnergames.peril.common.net.events.server.notification;
 
+import com.forerunnergames.peril.common.net.events.interfaces.PlayerEvent;
+import com.forerunnergames.peril.common.net.events.interfaces.PlayersEvent;
 import com.forerunnergames.peril.common.net.packets.person.PlayerPacket;
 import com.forerunnergames.tools.common.Arguments;
+import com.forerunnergames.tools.common.Strings;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
 import com.forerunnergames.tools.net.events.remote.origin.server.ServerNotificationEvent;
 
 import com.google.common.collect.ImmutableSet;
 
-public final class PlayerLeaveGameEvent implements ServerNotificationEvent
+public final class PlayerLeaveGameEvent implements PlayerEvent, PlayersEvent, ServerNotificationEvent
 {
   private final PlayerPacket player;
-  private final ImmutableSet <PlayerPacket> playersLeftInGame;
+  private final ImmutableSet <PlayerPacket> players;
 
-  public PlayerLeaveGameEvent (final PlayerPacket player, final ImmutableSet <PlayerPacket> playersLeftInGame)
+  public PlayerLeaveGameEvent (final PlayerPacket leavingPlayer, final ImmutableSet <PlayerPacket> remainingPlayers)
   {
-    Arguments.checkIsNotNull (player, "player");
+    Arguments.checkIsNotNull (leavingPlayer, "leavingPlayer");
+    Arguments.checkIsNotNull (remainingPlayers, "remainingPlayers");
+    Arguments.checkHasNoNullElements (remainingPlayers, "remainingPlayers");
 
-    this.player = player;
-    this.playersLeftInGame = playersLeftInGame;
+    this.player = leavingPlayer;
+    this.players = remainingPlayers;
   }
 
+  @Override
   public PlayerPacket getPlayer ()
   {
     return player;
+  }
+
+  @Override
+  public ImmutableSet <PlayerPacket> getPlayers ()
+  {
+    return players;
   }
 
   public String getPlayerName ()
@@ -30,21 +42,17 @@ public final class PlayerLeaveGameEvent implements ServerNotificationEvent
     return player.getName ();
   }
 
-  public ImmutableSet <PlayerPacket> getPlayersLeftInGame ()
-  {
-    return playersLeftInGame;
-  }
-
   @Override
   public String toString ()
   {
-    return String.format ("%1$s: Player: %2$s", getClass ().getSimpleName (), player);
+    return Strings.format ("{}: Player Who Left: {} | Remaining Players: {}", getClass ().getSimpleName (), player,
+                           players);
   }
 
   @RequiredForNetworkSerialization
   private PlayerLeaveGameEvent ()
   {
     player = null;
-    playersLeftInGame = null;
+    players = null;
   }
 }

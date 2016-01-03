@@ -12,11 +12,9 @@ import com.forerunnergames.peril.common.net.events.client.request.PlayerJoinGame
 import com.forerunnergames.peril.common.net.events.client.request.PlayerRequestEvent;
 import com.forerunnergames.peril.common.net.events.server.denied.JoinGameServerDeniedEvent;
 import com.forerunnergames.peril.common.net.events.server.denied.PlayerJoinGameDeniedEvent;
-import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerDeniedEvent;
 import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerInputRequestEvent;
 import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerResponseDeniedEvent;
 import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerResponseSuccessEvent;
-import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerSuccessEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.PlayerLeaveGameEvent;
 import com.forerunnergames.peril.common.net.events.server.success.ChatMessageSuccessEvent;
 import com.forerunnergames.peril.common.net.events.server.success.JoinGameServerSuccessEvent;
@@ -69,6 +67,8 @@ public final class MultiplayerController extends ControllerAdapter
 {
   // @formatter:off
   private static final Logger log = LoggerFactory.getLogger (MultiplayerController.class);
+  private static final int CALL_EVENT_HANDLER_FIRST = 10;
+  private static final int CALL_EVENT_HANDLER_LAST = 0;
   private final Multimap <PlayerPacket, PlayerInputRequestEvent> playerInputRequestEventCache = HashMultimap.create ();
   private final Map <String, Remote> playerJoinGameRequestCache = Collections.synchronizedMap (new HashMap <String, Remote> ());
   private final Set <Remote> clientsInServer = Collections.synchronizedSet (new HashSet <Remote> ());
@@ -186,26 +186,25 @@ public final class MultiplayerController extends ControllerAdapter
 
     final PlayerPacket newPlayer = event.getPlayer ();
 
-    // only add a player/client mapping if the client still exists in the game server
-    if (clientsInServer.contains (client))
+    // this should cover the case where the client disconnected before the successful join game request was processed.
+    // core will be notified that the player has left. The subsequent PlayerLeaveGameEvent will be ignored since there
+    // will be no client mapping for the disconnected player.
+    if (!clientsInServer.contains (client))
     {
-      final Optional <PlayerPacket> oldPlayer = clientsToPlayers.put (client, newPlayer);
-      if (oldPlayer.isPresent ())
-      {
-        // this generally shouldn't happen... but if it does, log a warning message
-        log.warn ("Overwrote previous player mapping for client [{}] | old player: [{}] | new player: [{}]", client,
-                  oldPlayer.get (), newPlayer);
-      }
-    }
-    else
-    {
-      // this should cover the case where the client disconnected before the successful join game request was processed.
-      // core will be notified that the player has left. The subsequent PlayerLeaveGameEvent will be ignored since there
-      // will be no client mapping for the disconnected player.
       log.warn ("Client [{}] for player [{}] is no longer connected to the server. Player will be removed.", client,
                 event.getPlayerName ());
       coreCommunicator.notifyRemovePlayerFromGame (event.getPlayer ());
       return;
+    }
+
+    // add a player/client mapping since the client still exists in the game server
+    final Optional <PlayerPacket> oldPlayer = clientsToPlayers.put (client, newPlayer);
+
+    if (oldPlayer.isPresent ())
+    {
+      // this generally shouldn't happen... but if it does, log a warning message
+      log.warn ("Overwrote previous player mapping for client [{}] | old player: [{}] | new player: [{}]", client,
+                oldPlayer.get (), newPlayer);
     }
 
     sendToAllPlayers (event);
@@ -231,7 +230,7 @@ public final class MultiplayerController extends ControllerAdapter
     playerJoinGameRequestCache.remove (playerName);
   }
 
-  @Handler
+  @Handler (priority = CALL_EVENT_HANDLER_FIRST)
   public void onEvent (final PlayerLeaveGameEvent event)
   {
     final Optional <Remote> client = clientsToPlayers.clientFor (event.getPlayer ());
@@ -242,39 +241,12 @@ public final class MultiplayerController extends ControllerAdapter
     }
     // remove client mapping
     remove (client.get ());
-    // send to all players still in the server
-    sendToAllPlayers (event);
   }
 
-  @Handler
-  public void onEvent (final PlayerSuccessEvent event)
-  {
-    Arguments.checkIsNotNull (event, "event");
-
-    if (event instanceof PlayerJoinGameSuccessEvent) return;
-
-    log.trace ("Event received [{}]", event);
-
-    sendToAllPlayers (event);
-  }
-
-  @Handler
-  public void onEvent (final PlayerDeniedEvent <?> event)
-  {
-    Arguments.checkIsNotNull (event, "event");
-
-    log.trace ("Event received [{}]", event);
-
-    sendToPlayer (event.getPlayer (), event);
-  }
-
-  @Handler
+  @Handler (priority = CALL_EVENT_HANDLER_LAST)
   public void onEvent (final ServerNotificationEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
-
-    // We have a separate handler / sender for this ServerNotificationEvent, so don't send twice.
-    if (event instanceof PlayerLeaveGameEvent) return;
 
     log.trace ("Event received [{}]", event);
 

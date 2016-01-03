@@ -1,4 +1,4 @@
-package com.forerunnergames.peril.common.net.events.server.defaults;
+package com.forerunnergames.peril.common.net.events.server.abstracts;
 
 import com.forerunnergames.tools.common.Arguments;
 import com.forerunnergames.tools.common.Strings;

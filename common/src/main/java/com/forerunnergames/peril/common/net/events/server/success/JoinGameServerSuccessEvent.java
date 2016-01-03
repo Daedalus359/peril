@@ -1,36 +1,43 @@
 package com.forerunnergames.peril.common.net.events.server.success;
 
 import com.forerunnergames.peril.common.net.GameServerConfiguration;
+import com.forerunnergames.peril.common.net.events.interfaces.PlayersEvent;
 import com.forerunnergames.peril.common.net.packets.person.PlayerPacket;
 import com.forerunnergames.tools.common.Arguments;
+import com.forerunnergames.tools.common.Strings;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
 import com.forerunnergames.tools.net.client.ClientConfiguration;
-import com.forerunnergames.tools.net.events.remote.origin.server.ServerEvent;
 import com.forerunnergames.tools.net.events.remote.origin.server.SuccessEvent;
 
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
 
-public final class JoinGameServerSuccessEvent implements SuccessEvent
+public final class JoinGameServerSuccessEvent implements PlayersEvent, SuccessEvent
 {
   private final GameServerConfiguration gameServerConfig;
   private final ClientConfiguration clientConfig;
-  private final Collection <PlayerPacket> playersInGame;
+  private final Collection <PlayerPacket> players;
 
   public JoinGameServerSuccessEvent (final GameServerConfiguration gameServerConfig,
                                      final ClientConfiguration clientConfig,
-                                     final Collection <PlayerPacket> playersInGame)
+                                     final Collection <PlayerPacket> players)
 
   {
     Arguments.checkIsNotNull (gameServerConfig, "gameServerConfig");
     Arguments.checkIsNotNull (clientConfig, "clientConfig");
-    Arguments.checkIsNotNull (playersInGame, "playersInGame");
-    Arguments.checkHasNoNullElements (playersInGame, "playersInGame");
+    Arguments.checkIsNotNull (players, "players");
+    Arguments.checkHasNoNullElements (players, "players");
 
     this.gameServerConfig = gameServerConfig;
     this.clientConfig = clientConfig;
-    this.playersInGame = playersInGame;
+    this.players = players;
+  }
+
+  @Override
+  public ImmutableSet <PlayerPacket> getPlayers ()
+  {
+    return ImmutableSet.copyOf (players);
   }
 
   public GameServerConfiguration getGameServerConfiguration ()
@@ -43,16 +50,11 @@ public final class JoinGameServerSuccessEvent implements SuccessEvent
     return clientConfig;
   }
 
-  public ImmutableSet <PlayerPacket> getPlayersInGame ()
-  {
-    return ImmutableSet.copyOf (playersInGame);
-  }
-
   @Override
   public String toString ()
   {
-    return String.format ("%1$s: Game Server Configuration: %2$s | Client Configuration: %3$s | Players In Game: %4$s",
-                          getClass ().getSimpleName (), gameServerConfig, clientConfig, playersInGame);
+    return Strings.format ("{}: Game Server Configuration: {} | Client Configuration: {} | Players: {}",
+                           getClass ().getSimpleName (), gameServerConfig, clientConfig, players);
   }
 
   @RequiredForNetworkSerialization
@@ -60,6 +62,6 @@ public final class JoinGameServerSuccessEvent implements SuccessEvent
   {
     gameServerConfig = null;
     clientConfig = null;
-    playersInGame = null;
+    players = null;
   }
 }

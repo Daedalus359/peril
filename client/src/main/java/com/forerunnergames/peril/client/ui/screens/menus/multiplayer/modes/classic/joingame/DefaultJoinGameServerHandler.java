@@ -117,9 +117,9 @@ public final class DefaultJoinGameServerHandler implements JoinGameServerHandler
 
     assert listener != null;
     listener.onJoinGameServerSuccess (event.getGameServerConfiguration (), event.getClientConfiguration (),
-                                      event.getPlayersInGame ());
+                                      event.getPlayers ());
 
-    players.addAll (event.getPlayersInGame ());
+    players.addAll (event.getPlayers ());
     gameServerConfig = event.getGameServerConfiguration ();
     clientConfig = event.getClientConfiguration ();
 

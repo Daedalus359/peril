@@ -1,13 +1,13 @@
 package com.forerunnergames.peril.common.net.events.server.success;
 
-import com.forerunnergames.peril.common.net.events.defaults.DefaultPlayerSelectCountryResponseEvent;
+import com.forerunnergames.peril.common.net.events.abstracts.AbstractPlayerSelectCountryResponseEvent;
 import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerResponseSuccessEvent;
 import com.forerunnergames.peril.common.net.packets.person.PlayerPacket;
 import com.forerunnergames.tools.common.Arguments;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
 
-public final class PlayerSelectCountryResponseSuccessEvent extends DefaultPlayerSelectCountryResponseEvent
-        implements PlayerResponseSuccessEvent
+public final class PlayerSelectCountryResponseSuccessEvent extends AbstractPlayerSelectCountryResponseEvent implements
+        PlayerResponseSuccessEvent
 {
   private final PlayerPacket player;
 

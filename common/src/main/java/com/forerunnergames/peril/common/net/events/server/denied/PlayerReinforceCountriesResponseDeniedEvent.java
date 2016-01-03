@@ -1,5 +1,6 @@
 package com.forerunnergames.peril.common.net.events.server.denied;
 
+import com.forerunnergames.peril.common.net.events.interfaces.PlayerEvent;
 import com.forerunnergames.peril.common.net.events.server.interfaces.CountryArmyChangeDeniedEvent;
 import com.forerunnergames.peril.common.net.events.server.interfaces.CountryArmyChangeDeniedEvent.Reason;
 import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerResponseDeniedEvent;
@@ -7,8 +8,8 @@ import com.forerunnergames.peril.common.net.packets.person.PlayerPacket;
 import com.forerunnergames.tools.common.Strings;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
 
-public final class PlayerReinforceCountriesResponseDeniedEvent
-        implements CountryArmyChangeDeniedEvent, PlayerResponseDeniedEvent <Reason>
+public final class PlayerReinforceCountriesResponseDeniedEvent implements CountryArmyChangeDeniedEvent, PlayerEvent,
+        PlayerResponseDeniedEvent <Reason>
 {
   private final PlayerPacket player;
   private final Reason reason;

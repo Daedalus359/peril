@@ -1,13 +1,13 @@
 package com.forerunnergames.peril.common.net.events.server.notification;
 
-import com.forerunnergames.peril.common.net.events.server.defaults.AbstractArmiesChangedEvent;
-import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerNotificationEvent;
+import com.forerunnergames.peril.common.net.events.interfaces.PlayerEvent;
+import com.forerunnergames.peril.common.net.events.server.abstracts.AbstractArmiesChangedEvent;
 import com.forerunnergames.peril.common.net.packets.person.PlayerPacket;
 import com.forerunnergames.tools.common.Arguments;
 import com.forerunnergames.tools.common.annotations.AllowNegative;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
 
-public final class PlayerArmiesChangedEvent extends AbstractArmiesChangedEvent implements PlayerNotificationEvent
+public final class PlayerArmiesChangedEvent extends AbstractArmiesChangedEvent implements PlayerEvent
 {
   private final PlayerPacket player;
 

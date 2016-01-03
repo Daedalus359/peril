@@ -1,6 +1,6 @@
 package com.forerunnergames.peril.common.net.events.server.notification;
 
-import com.forerunnergames.peril.common.net.events.server.defaults.AbstractArmiesChangedEvent;
+import com.forerunnergames.peril.common.net.events.server.abstracts.AbstractArmiesChangedEvent;
 import com.forerunnergames.peril.common.net.packets.territory.CountryPacket;
 import com.forerunnergames.tools.common.Arguments;
 import com.forerunnergames.tools.common.Strings;

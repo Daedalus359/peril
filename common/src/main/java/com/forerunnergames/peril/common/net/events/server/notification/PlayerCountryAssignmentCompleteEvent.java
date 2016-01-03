@@ -1,5 +1,6 @@
 package com.forerunnergames.peril.common.net.events.server.notification;
 
+import com.forerunnergames.peril.common.net.events.interfaces.PlayersEvent;
 import com.forerunnergames.peril.common.net.packets.person.PlayerPacket;
 import com.forerunnergames.peril.common.net.packets.territory.CountryPacket;
 import com.forerunnergames.tools.common.Arguments;
@@ -10,7 +11,7 @@ import com.forerunnergames.tools.net.events.remote.origin.server.ServerNotificat
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-public final class PlayerCountryAssignmentCompleteEvent implements ServerNotificationEvent
+public final class PlayerCountryAssignmentCompleteEvent implements PlayersEvent, ServerNotificationEvent
 {
   private final ImmutableMap <CountryPacket, PlayerPacket> countryToPlayerPackets;
 
@@ -22,14 +23,15 @@ public final class PlayerCountryAssignmentCompleteEvent implements ServerNotific
     this.countryToPlayerPackets = countryToPlayerPackets;
   }
 
-  public ImmutableSet <CountryPacket> getCountries ()
-  {
-    return countryToPlayerPackets.keySet ();
-  }
-
+  @Override
   public ImmutableSet <PlayerPacket> getPlayers ()
   {
     return ImmutableSet.copyOf (countryToPlayerPackets.values ());
+  }
+
+  public ImmutableSet <CountryPacket> getCountries ()
+  {
+    return countryToPlayerPackets.keySet ();
   }
 
   public PlayerPacket getOwner (final CountryPacket country)

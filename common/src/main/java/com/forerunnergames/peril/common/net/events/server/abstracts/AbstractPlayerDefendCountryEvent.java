@@ -1,5 +1,6 @@
-package com.forerunnergames.peril.common.net.events.server.defaults;
+package com.forerunnergames.peril.common.net.events.server.abstracts;
 
+import com.forerunnergames.peril.common.net.events.interfaces.PlayerEvent;
 import com.forerunnergames.peril.common.net.packets.battle.BattleActorPacket;
 import com.forerunnergames.peril.common.net.packets.person.PlayerPacket;
 import com.forerunnergames.peril.common.net.packets.territory.CountryPacket;
@@ -7,7 +8,7 @@ import com.forerunnergames.tools.common.Arguments;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
 import com.forerunnergames.tools.net.events.remote.origin.server.ServerEvent;
 
-public abstract class AbstractPlayerDefendCountryEvent implements ServerEvent
+public abstract class AbstractPlayerDefendCountryEvent implements PlayerEvent, ServerEvent
 {
   private final PlayerPacket defendingPlayer;
   private final CountryPacket defendingCountry;
@@ -26,6 +27,7 @@ public abstract class AbstractPlayerDefendCountryEvent implements ServerEvent
     this.attackerData = attackerData;
   }
 
+  @Override
   public PlayerPacket getPlayer ()
   {
     return defendingPlayer;

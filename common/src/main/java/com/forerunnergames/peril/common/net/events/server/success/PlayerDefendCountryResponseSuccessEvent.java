@@ -1,6 +1,6 @@
 package com.forerunnergames.peril.common.net.events.server.success;
 
-import com.forerunnergames.peril.common.net.events.server.defaults.AbstractPlayerDefendCountryEvent;
+import com.forerunnergames.peril.common.net.events.server.abstracts.AbstractPlayerDefendCountryEvent;
 import com.forerunnergames.peril.common.net.events.server.interfaces.PlayerResponseSuccessEvent;
 import com.forerunnergames.peril.common.net.packets.battle.BattleActorPacket;
 import com.forerunnergames.peril.common.net.packets.defaults.DefaultBattleActorPacket;

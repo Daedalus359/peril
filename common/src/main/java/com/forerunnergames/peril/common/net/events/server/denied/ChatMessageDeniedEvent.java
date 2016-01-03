@@ -2,27 +2,26 @@ package com.forerunnergames.peril.common.net.events.server.denied;
 
 import com.forerunnergames.peril.common.net.events.defaults.DefaultChatMessageEvent;
 import com.forerunnergames.peril.common.net.events.interfaces.ChatMessageEvent;
-import com.forerunnergames.peril.common.net.events.server.defaults.DefaultDeniedEvent;
+import com.forerunnergames.peril.common.net.events.server.abstracts.AbstractDeniedEvent;
 import com.forerunnergames.peril.common.net.messages.ChatMessage;
 import com.forerunnergames.tools.common.Arguments;
 import com.forerunnergames.tools.common.Author;
+import com.forerunnergames.tools.common.Strings;
 import com.forerunnergames.tools.net.annotations.RequiredForNetworkSerialization;
-import com.forerunnergames.tools.net.events.remote.origin.server.DeniedEvent;
 
 import javax.annotation.Nullable;
 
-public final class ChatMessageDeniedEvent implements ChatMessageEvent, DeniedEvent <String>
+public final class ChatMessageDeniedEvent extends AbstractDeniedEvent <String> implements ChatMessageEvent
 {
   private final ChatMessageEvent chatMessageEvent;
-  private final DeniedEvent <String> deniedEvent;
 
   public ChatMessageDeniedEvent (final ChatMessage message, final String reason)
   {
+    super (reason);
+
     Arguments.checkIsNotNull (message, "message");
-    Arguments.checkIsNotNull (reason, "reason");
 
     chatMessageEvent = new DefaultChatMessageEvent (message);
-    deniedEvent = new DefaultDeniedEvent (reason);
   }
 
   @Nullable
@@ -51,21 +50,14 @@ public final class ChatMessageDeniedEvent implements ChatMessageEvent, DeniedEve
   }
 
   @Override
-  public String getReason ()
-  {
-    return deniedEvent.getReason ();
-  }
-
-  @Override
   public String toString ()
   {
-    return String.format ("%1$s: %2$s | %3$s", getClass ().getSimpleName (), chatMessageEvent, deniedEvent);
+    return Strings.format ("{} | {}", chatMessageEvent, super.toString ());
   }
 
   @RequiredForNetworkSerialization
   private ChatMessageDeniedEvent ()
   {
     chatMessageEvent = null;
-    deniedEvent = null;
   }
 }
