@@ -1,0 +1,162 @@
+{
+  "catalog": [
+    {
+      "key": "normal-cursor",
+      "value": "/cursors/normal-cursor-v1.png"
+    },
+    {
+      "key": "text-cursor",
+      "value": "/cursors/text-cursor-v1.png"
+    },
+    {
+      "key": "splash-screen-atlases",
+      "value": [
+        "/screens/splash/splash-screen-atlas-v1.atlas",
+        "/screens/splash/splash-screen-atlas-v1.png"
+      ]
+    },
+    {
+      "key": "splash-screen-skin",
+      "value": "/screens/splash/splash-screen-skin-v1.json"
+    },
+    {
+      "key": "splash-screen-music",
+      "value": null
+    },
+    {
+      "key": "loading-screen-atlases",
+      "value": [
+        "/screens/loading/loading-screen-atlas-v1.atlas",
+        "/screens/loading/loading-screen-atlas-v1.png"
+      ]
+    },
+    {
+      "key": "loading-screen-skin",
+      "value": "/screens/loading/loading-screen-skin-v1.json"
+    },
+    {
+      "key": "loading-screen-music",
+      "value": null
+    },
+    {
+      "key": "menu-screens-atlases",
+      "value": [
+        "/screens/menus/shared/menu-screens-atlas1-v1.atlas",
+        "/screens/menus/shared/menu-screens-atlas1-v1.png",
+        "/screens/menus/shared/menu-screens-atlas2-v1.atlas",
+        "/screens/menus/shared/menu-screens-atlas2-v1.png"
+      ]
+    },
+    {
+      "key": "menu-screens-skin",
+      "value": "/screens/menus/shared/menu-screens-skin-v1.json"
+    },
+    {
+      "key": "menu-screens-music",
+      "value": "/screens/menus/shared/music/peril.ogg"
+    },
+    {
+      "key": "classic-mode-play-screen-atlases",
+      "value": [
+        "/screens/game/play/modes/classic/classic-mode-play-screen-atlas1-v1.atlas",
+        "/screens/game/play/modes/classic/classic-mode-play-screen-atlas1-v1.png",
+        "/screens/game/play/modes/classic/classic-mode-play-screen-atlas2-v1.atlas",
+        "/screens/game/play/modes/classic/classic-mode-play-screen-atlas2-v1.png"
+      ]
+    },
+    {
+      "key": "classic-mode-play-screen-skin",
+      "value": "/screens/game/play/modes/classic/classic-mode-play-screen-skin-v1.json"
+    },
+    {
+      "key": "classic-mode-play-screen-battle-sounds",
+      "value": [
+         "/screens/game/play/modes/classic/sounds/artillery-explosion-07-48k-v1.wav"
+      ]
+    },
+    {
+      "key": "classic-mode-play-screen-music",
+      "value": "/screens/game/play/modes/shared/music/battle-v1.mp3"
+    },
+    {
+      "key": "classic-mode--stock-map-classic",
+      "value": [
+        "maps/classic mode/stock/classic/cards/data/cards-v1.txt",
+        "maps/classic mode/stock/classic/continents/data/continent-graph-v1.txt",
+        "maps/classic mode/stock/classic/continents/data/continents-v1.txt",
+        "maps/classic mode/stock/classic/continents/data/input-detection-v1.txt",
+        "maps/classic mode/stock/classic/countries/atlases/countries1-v1.atlas",
+        "maps/classic mode/stock/classic/countries/atlases/countries1-v1.png",
+        "maps/classic mode/stock/classic/countries/atlases/countries2-v1.atlas",
+        "maps/classic mode/stock/classic/countries/atlases/countries2-v1.png",
+        "maps/classic mode/stock/classic/countries/atlases/countries3-v1.atlas",
+        "maps/classic mode/stock/classic/countries/atlases/countries3-v1.png",
+        "maps/classic mode/stock/classic/countries/atlases/countries4-v1.atlas",
+        "maps/classic mode/stock/classic/countries/atlases/countries4-v1.png",
+        "maps/classic mode/stock/classic/countries/data/countries-v1.txt",
+        "maps/classic mode/stock/classic/countries/data/country-graph-v1.txt",
+        "maps/classic mode/stock/classic/countries/data/image-data-v1.txt",
+        "maps/classic mode/stock/classic/countries/data/input-detection-v1.txt",
+        "maps/classic mode/stock/classic/background-v1.png",
+        "maps/classic mode/stock/classic/input-detection-v1.png",
+        "maps/classic mode/stock/classic/preview-v1.png"
+      ]
+    },
+    {
+      "key": "classic-mode-stock-map-classic-islands",
+      "value": [
+        "maps/classic mode/stock/classic islands/cards/data/cards-v1.txt",
+        "maps/classic mode/stock/classic islands/continents/data/continent-graph-v1.txt",
+        "maps/classic mode/stock/classic islands/continents/data/continents-v1.txt",
+        "maps/classic mode/stock/classic islands/continents/data/input-detection-v1.txt",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries1-v1.atlas",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries1-v1.png",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries2-v1.atlas",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries2-v1.png",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries3-v1.atlas",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries3-v1.png",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries4-v1.atlas",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries4-v1.png",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries5-v1.atlas",
+        "maps/classic mode/stock/classic islands/countries/atlases/countries5-v1.png",
+        "maps/classic mode/stock/classic islands/countries/data/countries-v1.txt",
+        "maps/classic mode/stock/classic islands/countries/data/country-graph-v1.txt",
+        "maps/classic mode/stock/classic islands/countries/data/image-data-v1.txt",
+        "maps/classic mode/stock/classic islands/countries/data/input-detection-v1.txt",
+        "maps/classic mode/stock/classic islands/background-v1.png",
+        "maps/classic mode/stock/classic islands/input-detection-v1.png",
+        "maps/classic mode/stock/classic islands/preview-v1.png"
+      ]
+    },
+    {
+      "key": "classic-mode-custom-map-my-uber-custom-map",
+      "value": [
+        "maps/classic mode/custom/my uber custom map/cards/data/cards-v1.txt",
+        "maps/classic mode/custom/my uber custom map/continents/data/continent-graph-v1.txt",
+        "maps/classic mode/custom/my uber custom map/continents/data/continents-v1.txt",
+        "maps/classic mode/custom/my uber custom map/continents/data/input-detection-v1.txt",
+        "maps/classic mode/custom/my uber custom map/countries/atlases/countries1-v1.atlas",
+        "maps/classic mode/custom/my uber custom map/countries/atlases/countries1-v1.png",
+        "maps/classic mode/custom/my uber custom map/countries/atlases/countries2-v1.atlas",
+        "maps/classic mode/custom/my uber custom map/countries/atlases/countries2-v1.png",
+        "maps/classic mode/custom/my uber custom map/countries/data/countries-v1.txt",
+        "maps/classic mode/custom/my uber custom map/countries/data/country-graph-v1.txt",
+        "maps/classic mode/custom/my uber custom map/countries/data/image-data-v1.txt",
+        "maps/classic mode/custom/my uber custom map/countries/data/input-detection-v1.txt",
+        "maps/classic mode/custom/my uber custom map/background-v1.png",
+        "maps/classic mode/custom/my uber custom map/input-detection-v1.png"
+      ]
+    },
+    {
+      "key": "peril-mode-play-screen-atlases",
+      "value": [
+        "/screens/game/play/modes/peril/peril-mode-play-screen-atlas1-v1.atlas",
+        "/screens/game/play/modes/peril/peril-mode-play-screen-atlas1-v1.png"
+      ]
+    },
+    {
+      "key": "peril-mode-play-screen-skin",
+      "value": null
+    }
+  ]
+}
