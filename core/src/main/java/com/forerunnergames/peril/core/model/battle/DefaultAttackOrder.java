@@ -1,6 +1,6 @@
 /*
- * Copyright © 2011 - 2013 Aaron Mahan.
- * Copyright © 2013 - 2016 Forerunner Games, LLC.
+ * Copyright �� 2011 - 2013 Aaron Mahan.
+ * Copyright �� 2013 - 2016 Forerunner Games, LLC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,52 +25,34 @@ import com.forerunnergames.tools.common.id.IdGenerator;
 final class DefaultAttackOrder implements AttackOrder
 {
   private final Id attackOrderId = IdGenerator.generateUniqueId ();
-  private final Id playerId;
-  private final Id sourceCountry;
-  private final Id targetCountry;
+  private final AttackVector attackVector;
   private final int dieCount;
 
-  DefaultAttackOrder (final Id playerId, final Id sourceCountry, final Id targetCountry, final int dieCount)
+  public DefaultAttackOrder (final AttackVector attackVector, final int dieCount)
   {
-    Arguments.checkIsNotNull (playerId, "playerId");
-    Arguments.checkIsNotNull (sourceCountry, "sourceCountry");
-    Arguments.checkIsNotNull (targetCountry, "targetCountry");
+    Arguments.checkIsNotNull (attackVector, "attackVector");
     Arguments.checkIsNotNegative (dieCount, "dieCount");
 
-    this.playerId = playerId;
-    this.sourceCountry = sourceCountry;
-    this.targetCountry = targetCountry;
+    this.attackVector = attackVector;
     this.dieCount = dieCount;
   }
-
+  
   @Override
-  public Id getId ()
+  public Id getId()
   {
-    return attackOrderId;
+    return this.attackOrderId;
   }
 
   @Override
-  public Id getPlayerId ()
+  public AttackVector getAttackVector ()
   {
-    return playerId;
-  }
-
-  @Override
-  public Id getSourceCountry ()
-  {
-    return sourceCountry;
-  }
-
-  @Override
-  public Id getTargetCountry ()
-  {
-    return targetCountry;
+    return this.attackVector;
   }
 
   @Override
   public int getDieCount ()
   {
-    return dieCount;
+    return this.dieCount;
   }
 
   @Override

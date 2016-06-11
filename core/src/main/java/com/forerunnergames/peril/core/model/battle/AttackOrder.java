@@ -1,6 +1,6 @@
 /*
- * Copyright © 2011 - 2013 Aaron Mahan.
- * Copyright © 2013 - 2016 Forerunner Games, LLC.
+ * Copyright �� 2011 - 2013 Aaron Mahan.
+ * Copyright �� 2013 - 2016 Forerunner Games, LLC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,9 @@ import com.forerunnergames.tools.common.id.Id;
 
 public interface AttackOrder
 {
-  Id getId ();
-
-  Id getPlayerId ();
-
-  Id getSourceCountry ();
-
-  Id getTargetCountry ();
-
+  Id getId();
+  
+  AttackVector getAttackVector();
+  
   int getDieCount ();
 }

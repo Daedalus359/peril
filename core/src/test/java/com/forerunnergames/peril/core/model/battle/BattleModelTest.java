@@ -30,7 +30,7 @@ import com.forerunnergames.peril.common.game.DieOutcome;
 import com.forerunnergames.peril.common.game.DieRoll;
 import com.forerunnergames.peril.common.game.rules.ClassicGameRules;
 import com.forerunnergames.peril.common.game.rules.GameRules;
-import com.forerunnergames.peril.common.net.events.server.denied.PlayerAttackCountryResponseDeniedEvent.Reason;
+import com.forerunnergames.peril.common.net.events.server.denied.PlayerAttackOrderResponseDeniedEvent.Reason;
 import com.forerunnergames.peril.common.net.packets.territory.CountryPacket;
 import com.forerunnergames.peril.core.model.GameModelTest;
 import com.forerunnergames.peril.core.model.map.PlayMapModel;

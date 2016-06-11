@@ -32,12 +32,12 @@ import com.google.common.collect.ImmutableMultimap;
 
 import java.util.Map;
 
-public final class PlayerAttackCountryRequestEvent extends AbstractPlayerEvent implements PlayerInputRequestEvent
+public final class PlayerBeginAttackRequestEvent extends AbstractPlayerEvent implements PlayerInputRequestEvent
 {
   private final ImmutableMultimap <CountryPacket, CountryPacket> validAttackVectors;
 
-  public PlayerAttackCountryRequestEvent (final PlayerPacket currentPlayer,
-                                          final ImmutableMultimap <CountryPacket, CountryPacket> validAttackVectors)
+  public PlayerBeginAttackRequestEvent (final PlayerPacket currentPlayer,
+                                        final ImmutableMultimap <CountryPacket, CountryPacket> validAttackVectors)
   {
     super (currentPlayer);
 
@@ -74,7 +74,7 @@ public final class PlayerAttackCountryRequestEvent extends AbstractPlayerEvent i
             .firstMatch (new Predicate <Map.Entry <CountryPacket, CountryPacket>> ()
             {
               @Override
-              public boolean apply (Map.Entry <CountryPacket, CountryPacket> input)
+              public boolean apply (final Map.Entry <CountryPacket, CountryPacket> input)
               {
                 return input.getKey ().hasName (fromCountryName) && input.getValue ().hasName (toCountryName);
               }
@@ -88,7 +88,7 @@ public final class PlayerAttackCountryRequestEvent extends AbstractPlayerEvent i
   }
 
   @RequiredForNetworkSerialization
-  private PlayerAttackCountryRequestEvent ()
+  private PlayerBeginAttackRequestEvent ()
   {
     validAttackVectors = null;
   }

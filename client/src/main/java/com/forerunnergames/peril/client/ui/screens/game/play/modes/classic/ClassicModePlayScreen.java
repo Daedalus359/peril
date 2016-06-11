@@ -113,7 +113,7 @@ import com.forerunnergames.peril.common.net.events.server.notification.PlayerLos
 import com.forerunnergames.peril.common.net.events.server.notification.PlayerWinGameEvent;
 import com.forerunnergames.peril.common.net.events.server.request.PlayerFortifyCountryRequestEvent;
 import com.forerunnergames.peril.common.net.events.server.success.ChatMessageSuccessEvent;
-import com.forerunnergames.peril.common.net.events.server.success.PlayerAttackCountryResponseSuccessEvent;
+import com.forerunnergames.peril.common.net.events.server.success.PlayerAttackOrderResponseSuccessEvent;
 import com.forerunnergames.peril.common.net.events.server.success.PlayerJoinGameSuccessEvent;
 import com.forerunnergames.peril.common.net.events.server.success.PlayerOccupyCountryResponseSuccessEvent;
 import com.forerunnergames.peril.common.net.events.server.success.PlayerReinforceInitialCountryResponseSuccessEvent;
@@ -887,7 +887,7 @@ public final class ClassicModePlayScreen extends InputAdapter implements Screen
   }
 
   @Handler
-  void onEvent (final PlayerAttackCountryResponseSuccessEvent event)
+  void onEvent (final PlayerAttackOrderResponseSuccessEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
 

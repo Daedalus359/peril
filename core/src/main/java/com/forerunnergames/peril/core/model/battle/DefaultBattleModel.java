@@ -1,6 +1,6 @@
 /*
- * Copyright © 2011 - 2013 Aaron Mahan.
- * Copyright © 2013 - 2016 Forerunner Games, LLC.
+ * Copyright �� 2011 - 2013 Aaron Mahan.
+ * Copyright �� 2013 - 2016 Forerunner Games, LLC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@ import com.forerunnergames.peril.common.game.DieFaceValue;
 import com.forerunnergames.peril.common.game.DieOutcome;
 import com.forerunnergames.peril.common.game.DieRoll;
 import com.forerunnergames.peril.common.game.rules.GameRules;
-import com.forerunnergames.peril.common.net.events.server.denied.PlayerAttackCountryResponseDeniedEvent.Reason;
+import com.forerunnergames.peril.common.net.events.server.denied.PlayerAttackOrderResponseDeniedEvent;
+import com.forerunnergames.peril.common.net.events.server.denied.PlayerBeginAttackResponseDeniedEvent;
+import com.forerunnergames.peril.common.net.events.server.denied.PlayerBeginAttackResponseDeniedEvent.Reason;
 import com.forerunnergames.peril.common.net.packets.territory.CountryPacket;
 import com.forerunnergames.peril.core.model.map.PlayMapModel;
 import com.forerunnergames.peril.core.model.map.country.CountryArmyModel;
@@ -55,13 +57,15 @@ public final class DefaultBattleModel implements BattleModel
   private static final ImmutableList <DieFaceValue> DIE_VALUES = ImmutableList.copyOf (DieFaceValue.values ());
   private final Set <AttackOrder> pendingAttackOrders = Sets.newHashSet ();
   private final Deque <BattleResult> battleResultArchive = Queues.newArrayDeque ();
+  private final PlayMapModel playMapModel;
   private final GameRules rules;
 
-  public DefaultBattleModel (final GameRules rules)
+  public DefaultBattleModel (final PlayMapModel playMapModel)
   {
-    Arguments.checkIsNotNull (rules, "rules");
+    Arguments.checkIsNotNull (playMapModel, "playMapModel");
 
-    this.rules = rules;
+    this.playMapModel = playMapModel;
+    this.rules = playMapModel.getRules ();
   }
 
   @Override
@@ -91,16 +95,13 @@ public final class DefaultBattleModel implements BattleModel
   }
 
   @Override
-  public DataResult <AttackOrder, Reason> newPlayerAttackOrder (final Id playerId,
-                                                                final Id sourceCountry,
-                                                                final Id targetCountry,
-                                                                final int dieCount,
-                                                                final PlayMapModel playMapModel)
+  public DataResult <AttackVector, PlayerBeginAttackResponseDeniedEvent.Reason> newPlayerAttackVector (final Id playerId,
+                                                                                                       final Id sourceCountry,
+                                                                                                       final Id targetCountry)
   {
     Arguments.checkIsNotNull (playerId, "playerId");
     Arguments.checkIsNotNull (sourceCountry, "sourceCountry");
     Arguments.checkIsNotNull (targetCountry, "targetCountry");
-    Arguments.checkIsNotNegative (dieCount, "dieCount");
     Arguments.checkIsNotNull (playMapModel, "playMapModel");
 
     final CountryMapGraphModel countryMapGraphModel = playMapModel.getCountryMapGraphModel ();
@@ -129,15 +130,33 @@ public final class DefaultBattleModel implements BattleModel
       return DataResult.failureNoData (Reason.INSUFFICIENT_ARMY_COUNT);
     }
 
+    final AttackVector attackVector = new DefaultAttackVector (playerId, sourceCountry, targetCountry);
+    return DataResult.success (attackVector);
+  }
+
+  @Override
+  public DataResult <AttackOrder, PlayerAttackOrderResponseDeniedEvent.Reason> newPlayerAttackOrder (final AttackVector attackVector,
+                                                                                                       final int dieCount)
+  {
+    Arguments.checkIsNotNull (attackVector, "attackVector");
+    Arguments.checkIsNotNegative (dieCount, "dieCount");
+
+    final CountryArmyModel countryArmyModel = playMapModel.getCountryArmyModel ();
+
+    final int sourceCountryArmyCount = countryArmyModel.getArmyCountFor (attackVector.getSourceCountry ());
+
+    if (sourceCountryArmyCount < rules.getMinArmiesOnCountryForAttack ())
+    {
+      return DataResult.failureNoData (PlayerAttackOrderResponseDeniedEvent.Reason.INSUFFICIENT_ARMY_COUNT);
+    }
+
     if (dieCount < rules.getMinAttackerDieCount (sourceCountryArmyCount)
             || dieCount > rules.getMaxAttackerDieCount (sourceCountryArmyCount))
     {
-      return DataResult.failureNoData (Reason.INVALID_DIE_COUNT);
+      return DataResult.failureNoData (PlayerAttackOrderResponseDeniedEvent.Reason.INVALID_DIE_COUNT);
     }
 
-    final AttackOrder attackOrder = new DefaultAttackOrder (playerId, sourceCountry, targetCountry, dieCount);
-    pendingAttackOrders.add (attackOrder);
-
+    final AttackOrder attackOrder = new DefaultAttackOrder (attackVector, dieCount);
     return DataResult.success (attackOrder);
   }
 
@@ -156,10 +175,11 @@ public final class DefaultBattleModel implements BattleModel
 
     final CountryOwnerModel countryOwnerModel = playMapModel.getCountryOwnerModel ();
     final CountryArmyModel countryArmyModel = playMapModel.getCountryArmyModel ();
+    final AttackVector attackVector = attackOrder.getAttackVector ();
 
-    final Id attackerCountry = attackOrder.getSourceCountry ();
-    final Id defenderCountry = attackOrder.getTargetCountry ();
-    final Id defenderId = countryOwnerModel.ownerOf (attackOrder.getTargetCountry ());
+    final Id attackerCountry = attackVector.getSourceCountry ();
+    final Id defenderCountry = attackVector.getTargetCountry ();
+    final Id defenderId = countryOwnerModel.ownerOf (attackVector.getTargetCountry ());
 
     // assertion sanity checks
     assert countryArmyModel.armyCountIsAtLeast (rules.getMinArmiesOnCountryForAttack (), attackerCountry);
@@ -228,7 +248,7 @@ public final class DefaultBattleModel implements BattleModel
         {
           final MutatorResult <?> reassignmentResult;
           reassignmentResult = countryOwnerModel.requestToReassignCountryOwner (defenderCountry,
-                                                                                attackOrder.getPlayerId ());
+                                                                                attackVector.getPlayerId ());
           if (reassignmentResult.failed ())
           {
             Exceptions.throwIllegalState ("Failed to re-assign owner of defending country | Reason: {}",
@@ -249,7 +269,7 @@ public final class DefaultBattleModel implements BattleModel
       defenderRolls.add (new DieRoll (defenderDieValue, defenderOutcome));
     }
 
-    final BattleActor attacker = new DefaultBattleActor (attackOrder.getPlayerId (), attackerCountry,
+    final BattleActor attacker = new DefaultBattleActor (attackVector.getPlayerId (), attackerCountry,
             attackOrder.getDieCount ());
     final BattleActor defender = new DefaultBattleActor (defenderId, defenderCountry, defenderDieCount);
     final BattleResult result = new DefaultBattleResult (attacker, defender,

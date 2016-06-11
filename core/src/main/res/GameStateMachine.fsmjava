@@ -85,15 +85,25 @@
                 name="event"
                 type="com.forerunnergames.peril.common.net.events.client.request.response.PlayerTradeInCardsResponseRequestEvent"/>
       </event>
-      <event id="onPlayerAttackCountryResponseRequestEvent">
+      <event id="onPlayerBeginAttackResponseRequestEvent">
         <parameter
                 name="event"
-                type="com.forerunnergames.peril.common.net.events.client.request.response.PlayerAttackCountryResponseRequestEvent"/>
+                type="com.forerunnergames.peril.common.net.events.client.request.response.PlayerBeginAttackResponseRequestEvent"/>
       </event>
-      <event id="onPlayerAttackCountryResponseSuccessEvent">
+      <event id="onPlayerAttackOrderResponseSuccessEvent">
         <parameter
                 name="event"
-                type="com.forerunnergames.peril.common.net.events.server.success.PlayerAttackCountryResponseSuccessEvent"/>
+                type="com.forerunnergames.peril.common.net.events.server.success.PlayerAttackOrderResponseSuccessEvent"/>
+      </event>
+      <event id="onPlayerAttackOrderResponseRequestEvent">
+        <parameter
+                name="event"
+                type="com.forerunnergames.peril.common.net.events.client.request.response.PlayerAttackOrderResponseRequestEvent"/>
+      </event>
+      <event id="onPlayerRetreatOrderResponseRequestEvent">
+        <parameter
+                name="event"
+                type="com.forerunnergames.peril.common.net.events.client.request.response.PlayerRetreatOrderResponseRequestEvent" />
       </event>
       <event id="onPlayerEndAttackPhaseResponseRequestEvent">
         <parameter
@@ -105,10 +115,20 @@
                 name="event"
                 type="com.forerunnergames.peril.common.net.events.client.request.response.PlayerDefendCountryResponseRequestEvent"/>
       </event>
-      <event id="onPlayerOccupyCountryRequestEvent">
+      <event id="onPlayerAttackVictoryEvent">
         <parameter
                 name="event"
-                type="com.forerunnergames.peril.common.net.events.server.request.PlayerOccupyCountryRequestEvent"/>
+                type="com.forerunnergames.peril.common.net.events.server.notification.PlayerAttackVictoryEvent"/>
+      </event>
+      <event id="onPlayerAttackDefeatEvent">
+        <parameter
+                name="event"
+                type="com.forerunnergames.peril.common.net.events.server.notification.PlayerAttackDefeatEvent"/>
+      </event>
+      <event id="onPlayerAttackIndecisiveEvent">
+        <parameter
+                name="event"
+                type="com.forerunnergames.peril.common.net.events.server.notification.PlayerAttackIndecisiveEvent"/>
       </event>
       <event id="onPlayerOccupyCountryResponseRequestEvent">
         <parameter
@@ -255,33 +275,42 @@
                 <state name="AttackPhase">
                   <onEntry action="gameModel.beginAttackPhase()"/>
                   <onExit action="gameModel.endAttackPhase()"/>
-                  <state name="WaitForPlayerAttackOrders">
-                    <onEntry action="gameModel.waitForPlayerAttackOrders()"/>
-                    <transition event="onPlayerAttackCountryResponseRequestEvent"
+                  <state name="WaitForPlayerBeginAttack" >
+                    <onEntry action="gameModel.waitForPlayerToBeginAttack()" />
+                    <transition event="onPlayerBeginAttackResponseRequestEvent"
+                                condition="gameModel.verifyPlayerAttackVector(event)"
+                                nextState="WaitForPlayerAttackOrder" />
+                    <transition event="onPlayerEndAttackPhaseResponseRequestEvent"
+                                action="gameModel.processPlayerEndAttackPhase(event)"
+                                nextState="FortifyPhase" />
+                  </state>
+                  <state name="WaitForPlayerAttackOrder">
+                    <onEntry action="gameModel.waitForPlayerAttackOrder()"/>
+                    <transition event="onPlayerAttackOrderResponseRequestEvent"
                                 condition="gameModel.verifyPlayerAttackOrder(event)"
                                 nextState="WaitForDefenderResponse"/>
-                    <transition event="onPlayerEndAttackPhaseResponseRequestEvent"
-                                condition="gameModel.verifyPlayerEndAttackPhase(event)"
-                                nextState="FortifyPhase"/>
+                    <transition event="onPlayerRetreatOrderResponseRequestEvent"
+                                action="gameModel.processPlayerRetreat(event)"
+                                nextState="WaitForPlayerBeginAttack"/>
                   </state>
                   <state name="WaitForDefenderResponse">
                     <transition event="onPlayerDefendCountryResponseRequestEvent"
                                 condition="gameModel.verifyPlayerDefendCountryResponseRequest(event)"
-                                nextState="GenerateBattleResult"/>
+                                nextState="ProcessBattle"/>
                   </state>
-                  <state name="GenerateBattleResult">
-                    <onEntry action="gameModel.generateBattleResult()"/>
-                    <transition event="onPlayerAttackCountryResponseSuccessEvent"
-                                nextState="WaitForPlayerAttackOrders"/>
-                    <!-- Note: the occupation request event must be sent before the attack success event in order
-                         for the correct transition to occur -->
-                    <transition event="onPlayerOccupyCountryRequestEvent"
+                  <state name="ProcessBattle">
+                    <onEntry action="gameModel.processBattle()"/>
+                    <transition event="onPlayerAttackVictoryEvent"
                                 nextState="WaitForPlayerToOccupyCountry"/>
+                    <transition event="onPlayerAttackDefeatEvent"
+                                nextState="WaitForPlayerBeginAttack" />
+                    <transition event="onPlayerAttackIndecisiveEvent"
+                                nextState="WaitForPlayerAttackOrder" />
                   </state>
                   <state name="WaitForPlayerToOccupyCountry">
                     <transition event="onPlayerOccupyCountryResponseRequestEvent"
                                 condition="gameModel.verifyPlayerOccupyCountryResponseRequest(event)"
-                                nextState="WaitForPlayerAttackOrders"/>
+                                nextState="WaitForPlayerBeginAttack"/>
                   </state>
                 </state>
                 <state name="FortifyPhase">

@@ -1,6 +1,6 @@
 /*
- * Copyright © 2011 - 2013 Aaron Mahan.
- * Copyright © 2013 - 2016 Forerunner Games, LLC.
+ * Copyright �� 2011 - 2013 Aaron Mahan.
+ * Copyright �� 2013 - 2016 Forerunner Games, LLC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,27 +31,27 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class PlayerTurnDataCache
+class PlayerTurnDataCache <K>
 {
   private static final Logger log = LoggerFactory.getLogger (PlayerTurnDataCache.class);
 
-  private final Map <CacheKey, Object> dataCache = Maps.newConcurrentMap ();
+  private final Map <K, Object> dataCache = Maps.newConcurrentMap ();
 
-  boolean isSet (final CacheKey key)
+  boolean isSet (final K key)
   {
     Arguments.checkIsNotNull (key, "key");
 
     return dataCache.containsKey (key);
   }
 
-  boolean isNotSet (final CacheKey key)
+  boolean isNotSet (final K key)
   {
     Arguments.checkIsNotNull (key, "key");
 
     return !dataCache.containsKey (key);
   }
 
-  void put (final CacheKey key, final Object value)
+  void put (final K key, final Object value)
   {
     Arguments.checkIsNotNull (key, "key");
     Arguments.checkIsNotNull (value, "value");
@@ -65,7 +65,7 @@ class PlayerTurnDataCache
     dataCache.put (key, value);
   }
 
-  <T> T get (final CacheKey key, final Class <T> valueType)
+  <T> T get (final K key, final Class <T> valueType)
   {
     Arguments.checkIsNotNull (key, "key");
     Arguments.checkIsNotNull (valueType, "valueType");
@@ -74,7 +74,7 @@ class PlayerTurnDataCache
     return valueType.cast (dataCache.get (key));
   }
 
-  <T> Optional <T> checkAndGet (final CacheKey key, final Class <T> valueType)
+  <T> Optional <T> checkAndGet (final K key, final Class <T> valueType)
   {
     Arguments.checkIsNotNull (key, "key");
     Arguments.checkIsNotNull (valueType, "valueType");
@@ -82,14 +82,14 @@ class PlayerTurnDataCache
     return Optional.fromNullable (valueType.cast (dataCache.get (key)));
   }
 
-  void clear (final CacheKey key)
+  void clear (final K key)
   {
     Arguments.checkIsNotNull (key, "key");
 
     dataCache.remove (key);
   }
 
-  <T> Optional <T> clear (final CacheKey key, final Class <T> valueType)
+  <T> Optional <T> clear (final K key, final Class <T> valueType)
   {
     Arguments.checkIsNotNull (key, "key");
     Arguments.checkIsNotNull (valueType, "valueType");
@@ -114,16 +114,5 @@ class PlayerTurnDataCache
   public String toString ()
   {
     return Strings.format ("{}: [{}]", getClass ().getSimpleName (), dataCache);
-  }
-
-  enum CacheKey
-  {
-    BATTLE_PENDING_ATTACK_ORDER,
-    BATTLE_ATTACKER_DATA,
-    BATTLE_DEFENDER_DATA,
-    OCCUPY_SOURCE_COUNTRY,
-    OCCUPY_DEST_COUNTRY,
-    OCCUPY_PREV_OWNER,
-    OCCUPY_MIN_ARMY_COUNT
   }
 }

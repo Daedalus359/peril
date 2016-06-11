@@ -19,7 +19,8 @@
 package com.forerunnergames.peril.core.model.state;
 
 import com.forerunnergames.peril.common.net.events.client.request.PlayerJoinGameRequestEvent;
-import com.forerunnergames.peril.common.net.events.client.request.response.PlayerAttackCountryResponseRequestEvent;
+import com.forerunnergames.peril.common.net.events.client.request.response.PlayerAttackOrderResponseRequestEvent;
+import com.forerunnergames.peril.common.net.events.client.request.response.PlayerBeginAttackResponseRequestEvent;
 import com.forerunnergames.peril.common.net.events.client.request.response.PlayerClaimCountryResponseRequestEvent;
 import com.forerunnergames.peril.common.net.events.client.request.response.PlayerDefendCountryResponseRequestEvent;
 import com.forerunnergames.peril.common.net.events.client.request.response.PlayerEndAttackPhaseResponseRequestEvent;
@@ -27,17 +28,20 @@ import com.forerunnergames.peril.common.net.events.client.request.response.Playe
 import com.forerunnergames.peril.common.net.events.client.request.response.PlayerOccupyCountryResponseRequestEvent;
 import com.forerunnergames.peril.common.net.events.client.request.response.PlayerReinforceCountriesResponseRequestEvent;
 import com.forerunnergames.peril.common.net.events.client.request.response.PlayerReinforceInitialCountryResponseRequestEvent;
+import com.forerunnergames.peril.common.net.events.client.request.response.PlayerRetreatOrderResponseRequestEvent;
 import com.forerunnergames.peril.common.net.events.client.request.response.PlayerTradeInCardsResponseRequestEvent;
 import com.forerunnergames.peril.common.net.events.server.denied.PlayerJoinGameDeniedEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.DeterminePlayerTurnOrderCompleteEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.DistributeInitialArmiesCompleteEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.EndInitialReinforcementPhaseEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.EndPlayerTurnEvent;
+import com.forerunnergames.peril.common.net.events.server.notification.PlayerAttackDefeatEvent;
+import com.forerunnergames.peril.common.net.events.server.notification.PlayerAttackIndecisiveEvent;
+import com.forerunnergames.peril.common.net.events.server.notification.PlayerAttackVictoryEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.PlayerCountryAssignmentCompleteEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.PlayerLeaveGameEvent;
 import com.forerunnergames.peril.common.net.events.server.notification.SkipPlayerTurnEvent;
-import com.forerunnergames.peril.common.net.events.server.request.PlayerOccupyCountryRequestEvent;
-import com.forerunnergames.peril.common.net.events.server.success.PlayerAttackCountryResponseSuccessEvent;
+import com.forerunnergames.peril.common.net.events.server.success.PlayerAttackOrderResponseSuccessEvent;
 import com.forerunnergames.peril.common.net.events.server.success.PlayerClaimCountryResponseSuccessEvent;
 import com.forerunnergames.peril.common.net.events.server.success.PlayerJoinGameSuccessEvent;
 import com.forerunnergames.peril.core.model.GameModel;
@@ -272,16 +276,6 @@ public final class StateMachineEventHandler
   }
 
   @Handler
-  public void onEvent (final PlayerAttackCountryResponseRequestEvent event)
-  {
-    Arguments.checkIsNotNull (event, "event");
-
-    log.trace ("Received event {}", event);
-
-    context.onPlayerAttackCountryResponseRequestEvent (event);
-  }
-
-  @Handler
   public void onEvent (final PlayerEndAttackPhaseResponseRequestEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
@@ -302,23 +296,73 @@ public final class StateMachineEventHandler
   }
 
   @Handler
-  public void onEvent (final PlayerAttackCountryResponseSuccessEvent event)
+  public void onEvent (final PlayerBeginAttackResponseRequestEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
 
     log.trace ("Received event {}", event);
 
-    context.onPlayerAttackCountryResponseSuccessEvent (event);
+    context.onPlayerBeginAttackResponseRequestEvent (event);
   }
 
   @Handler
-  public void onEvent (final PlayerOccupyCountryRequestEvent event)
+  public void onEvent (final PlayerAttackOrderResponseRequestEvent event)
   {
     Arguments.checkIsNotNull (event, "event");
 
     log.trace ("Received event {}", event);
 
-    context.onPlayerOccupyCountryRequestEvent (event);
+    context.onPlayerAttackOrderResponseRequestEvent (event);
+  }
+
+  @Handler
+  public void onEvent (final PlayerRetreatOrderResponseRequestEvent event)
+  {
+    Arguments.checkIsNotNull (event, "event");
+
+    log.trace ("Received event {}", event);
+
+    context.onPlayerRetreatOrderResponseRequestEvent (event);
+  }
+
+  @Handler
+  public void onEvent (final PlayerAttackOrderResponseSuccessEvent event)
+  {
+    Arguments.checkIsNotNull (event, "event");
+
+    log.trace ("Received event {}", event);
+
+    context.onPlayerAttackOrderResponseSuccessEvent (event);
+  }
+
+  @Handler
+  public void onEvent (final PlayerAttackVictoryEvent event)
+  {
+    Arguments.checkIsNotNull (event, "event");
+
+    log.trace ("Received event {}", event);
+
+    context.onPlayerAttackVictoryEvent (event);
+  }
+
+  @Handler
+  public void onEvent (final PlayerAttackDefeatEvent event)
+  {
+    Arguments.checkIsNotNull (event, "event");
+
+    log.trace ("Received event {}", event);
+
+    context.onPlayerAttackDefeatEvent (event);
+  }
+
+  @Handler
+  public void onEvent (final PlayerAttackIndecisiveEvent event)
+  {
+    Arguments.checkIsNotNull (event, "event");
+
+    log.trace ("Received event {}", event);
+
+    context.onPlayerAttackIndecisiveEvent (event);
   }
 
   @Handler
