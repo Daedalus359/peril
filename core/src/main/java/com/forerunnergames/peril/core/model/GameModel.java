@@ -187,7 +187,7 @@ public final class GameModel
              final BattleModel battleModel,
              final GameRules rules,
              final InternalCommunicationHandler internalCommHandler,
-             final PlayerTurnDataCache turnDataCache,
+             final PlayerTurnDataCache <CacheKey> turnDataCache,
              final EventFactory eventFactory,
              final MBassador <Event> eventBus)
   {
@@ -1049,8 +1049,7 @@ public final class GameModel
     final int initialDefenderAmryCount = countryArmyModel.getArmyCountFor (defender.getCountryId ());
 
     final AttackOrder attackOrder = turnDataCache.get (CacheKey.BATTLE_ATTACK_VECTOR, AttackOrder.class);
-    final BattleResult result = battleModel.generateResultFor (attackOrder, defender.getDieCount (), playerModel,
-                                                               playMapModel);
+    final BattleResult result = battleModel.generateResultFor (attackOrder, defender.getDieCount (), playerModel);
     log.trace ("Battle result: {}", result);
 
     // -- send notification and/or occupation request events -- //
@@ -1624,7 +1623,7 @@ public final class GameModel
       cardModel = new DefaultCardModel (gameRules, ImmutableSet. <Card> of ());
       playerTurnModel = new DefaultPlayerTurnModel (gameRules.getPlayerLimit ());
       battleModel = new DefaultBattleModel (playMapModel);
-      turnDataCache = new PlayerTurnDataCache ();
+      turnDataCache = new PlayerTurnDataCache <CacheKey> ();
     }
   }
 
