@@ -30,7 +30,7 @@ import com.forerunnergames.peril.common.game.DieOutcome;
 import com.forerunnergames.peril.common.game.DieRoll;
 import com.forerunnergames.peril.common.game.rules.ClassicGameRules;
 import com.forerunnergames.peril.common.game.rules.GameRules;
-import com.forerunnergames.peril.common.net.events.server.denied.PlayerAttackOrderResponseDeniedEvent.Reason;
+import com.forerunnergames.peril.common.net.events.server.denied.PlayerBeginAttackResponseDeniedEvent;
 import com.forerunnergames.peril.common.net.packets.territory.CountryPacket;
 import com.forerunnergames.peril.core.model.GameModelTest;
 import com.forerunnergames.peril.core.model.map.PlayMapModel;
@@ -62,6 +62,7 @@ public class BattleModelTest
   private CountryOwnerModel countryOwnerModel;
   private CountryArmyModel countryArmyModel;
   private BattleModel battleModel;
+  private PlayMapModel playMapModel;
   private GameRules gameRules;
 
   @Before
@@ -72,13 +73,13 @@ public class BattleModelTest
             .totalCountryCount (countryMapGraphModel.size ()).build ();
     countryOwnerModel = new DefaultCountryOwnerModel (countryMapGraphModel, gameRules);
     countryArmyModel = new DefaultCountryArmyModel (countryMapGraphModel, gameRules);
-    battleModel = new DefaultBattleModel (gameRules);
+    playMapModel = mockPlayMapModel ();
+    battleModel = new DefaultBattleModel (playMapModel);
   }
 
   @Test
   public void testGetValidAttackTargetsForCountryWithAdjacentTargets ()
   {
-    final PlayMapModel playMapModel = mockPlayMapModel ();
     final Id player0 = IdGenerator.generateUniqueId ();
     final Id player1 = IdGenerator.generateUniqueId ();
     final ImmutableList <Id> countries = getTestCountryIds ();
@@ -103,7 +104,6 @@ public class BattleModelTest
   @Test
   public void testGetValidAttackTargetsForCountryWithNoAdjacentTargets ()
   {
-    final PlayMapModel playMapModel = mockPlayMapModel ();
     final Id player0 = IdGenerator.generateUniqueId ();
     final ImmutableList <Id> countries = getTestCountryIds ();
 
@@ -120,7 +120,6 @@ public class BattleModelTest
   @Test
   public void testGetValidAttackTargetsForCountryWithTooFewArmies ()
   {
-    final PlayMapModel playMapModel = mockPlayMapModel ();
     final Id player0 = IdGenerator.generateUniqueId ();
     final Id player1 = IdGenerator.generateUniqueId ();
     final ImmutableList <Id> countries = getTestCountryIds ();
@@ -137,9 +136,8 @@ public class BattleModelTest
   }
 
   @Test
-  public void testNewPlayerAttackOrderWithValidAttackData ()
+  public void testNewPlayerAttackVectorWithValidAttackData ()
   {
-    final PlayMapModel playMapModel = mockPlayMapModel ();
     final Id player0 = IdGenerator.generateUniqueId ();
     final Id player1 = IdGenerator.generateUniqueId ();
     final ImmutableList <Id> countries = getTestCountryIds ();
@@ -154,20 +152,19 @@ public class BattleModelTest
     final Id sourceCountry = countries.get (0);
     final Id targetCountry = countries.get (2);
     final int dieCount = gameRules.getMaxAttackerDieCount (countryArmyCount);
-    final DataResult <AttackOrder, ?> result = battleModel.newPlayerAttackOrder (player0, sourceCountry, targetCountry,
-                                                                                 dieCount, playMapModel);
+    final DataResult <AttackVector, ?> result = battleModel.newPlayerAttackVector (player0, sourceCountry,
+                                                                                   targetCountry);
     assertTrue (result.succeeded ());
-    final AttackOrder pendingOrder = result.getReturnValue ();
+    final AttackVector pendingOrder = result.getReturnValue ();
     assertEquals (player0, pendingOrder.getPlayerId ());
     assertEquals (sourceCountry, pendingOrder.getSourceCountry ());
     assertEquals (targetCountry, pendingOrder.getTargetCountry ());
-    assertEquals (dieCount, pendingOrder.getDieCount ());
+    // assertEquals (dieCount, pendingOrder.getDieCount ());
   }
 
   @Test
-  public void testNewPlayerAttackOrderWithInvalidSourceCountry ()
+  public void testNewPlayerAttackVectorWithInvalidSourceCountry ()
   {
-    final PlayMapModel playMapModel = mockPlayMapModel ();
     final Id player0 = IdGenerator.generateUniqueId ();
     final Id player1 = IdGenerator.generateUniqueId ();
     final ImmutableList <Id> countries = getTestCountryIds ();
@@ -182,14 +179,14 @@ public class BattleModelTest
     final Id sourceCountry = countries.get (2);
     final Id targetCountry = countries.get (3);
     final int dieCount = gameRules.getMaxAttackerDieCount (countryArmyCount);
-    final DataResult <AttackOrder, Reason> result;
-    result = battleModel.newPlayerAttackOrder (player0, sourceCountry, targetCountry, dieCount, playMapModel);
+    final DataResult <AttackVector, PlayerBeginAttackResponseDeniedEvent.Reason> result;
+    result = battleModel.newPlayerAttackVector (player0, sourceCountry, targetCountry);
     assertTrue (result.failed ());
-    assertTrue (result.failedBecauseOf (Reason.NOT_OWNER_OF_SOURCE_COUNTRY));
+    assertTrue (result.failedBecauseOf (PlayerBeginAttackResponseDeniedEvent.Reason.NOT_OWNER_OF_SOURCE_COUNTRY));
   }
 
   @Test
-  public void testNewPlayerAttackOrderWithInvalidTargetCountry ()
+  public void testNewPlayerAttackVectorWithInvalidTargetCountry ()
   {
     final PlayMapModel playMapModel = mockPlayMapModel ();
     final Id player0 = IdGenerator.generateUniqueId ();
@@ -206,10 +203,10 @@ public class BattleModelTest
     final Id sourceCountry = countries.get (0);
     final Id targetCountry = countries.get (1);
     final int dieCount = gameRules.getMaxAttackerDieCount (countryArmyCount);
-    final DataResult <AttackOrder, Reason> result;
-    result = battleModel.newPlayerAttackOrder (player0, sourceCountry, targetCountry, dieCount, playMapModel);
+    final DataResult <AttackVector, PlayerBeginAttackResponseDeniedEvent.Reason> result;
+    result = battleModel.newPlayerAttackVector (player0, sourceCountry, targetCountry);
     assertTrue (result.failed ());
-    assertTrue (result.failedBecauseOf (Reason.ALREADY_OWNER_OF_TARGET_COUNTRY));
+    assertTrue (result.failedBecauseOf (PlayerBeginAttackResponseDeniedEvent.Reason.ALREADY_OWNER_OF_TARGET_COUNTRY));
   }
 
   @Test
@@ -230,10 +227,10 @@ public class BattleModelTest
     final Id sourceCountry = countries.get (0);
     final Id targetCountry = countries.get (2);
     final int dieCount = gameRules.getMaxAttackerDieCount (countryArmyCount);
-    final DataResult <AttackOrder, Reason> result;
-    result = battleModel.newPlayerAttackOrder (player0, sourceCountry, targetCountry, dieCount, playMapModel);
+    final DataResult <AttackVector, PlayerBeginAttackResponseDeniedEvent.Reason> result;
+    result = battleModel.newPlayerAttackVector (player0, sourceCountry, targetCountry);
     assertTrue (result.failed ());
-    assertTrue (result.failedBecauseOf (Reason.INSUFFICIENT_ARMY_COUNT));
+    assertTrue (result.failedBecauseOf (PlayerBeginAttackResponseDeniedEvent.Reason.INSUFFICIENT_ARMY_COUNT));
   }
 
   @Test
@@ -260,12 +257,11 @@ public class BattleModelTest
     final Id targetCountry = countries.get (2);
     final int attackerDieCount = gameRules.getMaxAttackerDieCount (countryArmyCount);
     final int defenderDieCount = gameRules.getMaxDefenderDieCount (countryArmyCount);
-    final AttackOrder mockOrder = battleModel
-            .newPlayerAttackOrder (player0, sourceCountry, targetCountry, attackerDieCount, playMapModel)
+    final AttackVector mockVector = battleModel.newPlayerAttackVector (player0, sourceCountry, targetCountry)
             .getReturnValue ();
+    final AttackOrder mockOrder = battleModel.newPlayerAttackOrder (mockVector, attackerDieCount).getReturnValue ();
 
-    final BattleResult battleResult = battleModel.generateResultFor (mockOrder, defenderDieCount, playerModel,
-                                                                     playMapModel);
+    final BattleResult battleResult = battleModel.generateResultFor (mockOrder, defenderDieCount, playerModel);
     assertNotNull (battleResult);
 
     final ImmutableList <DieRoll> attackerRolls = battleResult.getAttackerRolls ();
@@ -321,12 +317,11 @@ public class BattleModelTest
     final Id targetCountry = countries.get (2);
     final int attackerDieCount = gameRules.getMaxAttackerDieCount (attackingCountryArmyCount);
     final int defenderDieCount = gameRules.getMaxDefenderDieCount (attackingCountryArmyCount);
-    final AttackOrder mockOrder = battleModel
-            .newPlayerAttackOrder (player0, sourceCountry, targetCountry, attackerDieCount, playMapModel)
+    final AttackVector mockVector = battleModel.newPlayerAttackVector (player0, sourceCountry, targetCountry)
             .getReturnValue ();
+    final AttackOrder mockOrder = battleModel.newPlayerAttackOrder (mockVector, attackerDieCount).getReturnValue ();
 
-    final BattleResult battleResult = battleModel.generateResultFor (mockOrder, defenderDieCount, playerModel,
-                                                                     playMapModel);
+    final BattleResult battleResult = battleModel.generateResultFor (mockOrder, defenderDieCount, playerModel);
     assertNotNull (battleResult);
 
     final ImmutableList <DieRoll> attackerRolls = battleResult.getAttackerRolls ();
@@ -381,12 +376,11 @@ public class BattleModelTest
     final Id targetCountry = countries.get (2);
     final int attackerDieCount = gameRules.getMinAttackerDieCount (countryArmyCount);
     final int defenderDieCount = gameRules.getMaxDefenderDieCount (countryArmyCount);
-    final AttackOrder mockOrder = battleModel
-            .newPlayerAttackOrder (player0, sourceCountry, targetCountry, attackerDieCount, playMapModel)
+    final AttackVector mockVector = battleModel.newPlayerAttackVector (player0, sourceCountry, targetCountry)
             .getReturnValue ();
+    final AttackOrder mockOrder = battleModel.newPlayerAttackOrder (mockVector, attackerDieCount).getReturnValue ();
 
-    final BattleResult battleResult = battleModel.generateResultFor (mockOrder, defenderDieCount, playerModel,
-                                                                     playMapModel);
+    final BattleResult battleResult = battleModel.generateResultFor (mockOrder, defenderDieCount, playerModel);
     assertNotNull (battleResult);
 
     final ImmutableList <DieRoll> attackerRolls = battleResult.getAttackerRolls ();
@@ -423,6 +417,7 @@ public class BattleModelTest
     when (playMapModelMock.getCountryMapGraphModel ()).thenReturn (countryMapGraphModel);
     when (playMapModelMock.getCountryOwnerModel ()).thenReturn (countryOwnerModel);
     when (playMapModelMock.getCountryArmyModel ()).thenReturn (countryArmyModel);
+    when (playMapModelMock.getRules ()).thenReturn (gameRules);
     return playMapModelMock;
   }
 

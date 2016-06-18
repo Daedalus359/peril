@@ -38,16 +38,15 @@ public interface BattleModel
    * failure.
    */
   DataResult <AttackVector, PlayerBeginAttackResponseDeniedEvent.Reason> newPlayerAttackVector (final Id playerId,
-                                                                                               final Id sourceCountry,
-                                                                                               final Id targetCountry);
+                                                                                                final Id sourceCountry,
+                                                                                                final Id targetCountry);
 
   DataResult <AttackOrder, PlayerAttackOrderResponseDeniedEvent.Reason> newPlayerAttackOrder (final AttackVector attackVector,
-                                                                                                final int dieCount);
+                                                                                              final int dieCount);
 
   BattleResult generateResultFor (final AttackOrder attackOrder,
                                   final int defenderDieCount,
-                                  final PlayerModel playerModel,
-                                  final PlayMapModel playMapModel);
+                                  final PlayerModel playerModel);
 
   Optional <BattleResult> getLastBattleResult ();
 }

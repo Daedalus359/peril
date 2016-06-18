@@ -136,7 +136,7 @@ public final class DefaultBattleModel implements BattleModel
 
   @Override
   public DataResult <AttackOrder, PlayerAttackOrderResponseDeniedEvent.Reason> newPlayerAttackOrder (final AttackVector attackVector,
-                                                                                                       final int dieCount)
+                                                                                                     final int dieCount)
   {
     Arguments.checkIsNotNull (attackVector, "attackVector");
     Arguments.checkIsNotNegative (dieCount, "dieCount");
@@ -157,14 +157,14 @@ public final class DefaultBattleModel implements BattleModel
     }
 
     final AttackOrder attackOrder = new DefaultAttackOrder (attackVector, dieCount);
+    pendingAttackOrders.add (attackOrder);
     return DataResult.success (attackOrder);
   }
 
   @Override
   public BattleResult generateResultFor (final AttackOrder attackOrder,
                                          final int defenderDieCount,
-                                         final PlayerModel playerModel,
-                                         final PlayMapModel playMapModel)
+                                         final PlayerModel playerModel)
   {
     Arguments.checkIsNotNull (attackOrder, "attackOrder");
     Arguments.checkIsNotNegative (defenderDieCount, "defenderDieCount");
@@ -172,6 +172,8 @@ public final class DefaultBattleModel implements BattleModel
     Arguments.checkIsNotNull (playMapModel, "playMapModel");
     Preconditions.checkIsTrue (pendingAttackOrders.contains (attackOrder),
                                Strings.format ("No pending attack order with Id: {}", attackOrder.getId ()));
+
+    pendingAttackOrders.remove (attackOrder);
 
     final CountryOwnerModel countryOwnerModel = playMapModel.getCountryOwnerModel ();
     final CountryArmyModel countryArmyModel = playMapModel.getCountryArmyModel ();
